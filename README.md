@@ -22,14 +22,6 @@
 	 (the translate component) and calculate the inverse-transpose of this matrix
    this will give us a matrix which rotates, but does not translate or scale
 
-	indices of mat4.m: 12, 13, 14 are the translate component
-
-  	|0|4|8|Tx|	
-	|1|5|9|Ty|
-	|2|6|10|Tz|
-	|3|7|11|15|
-
-
  - normalise new direction 
  - scale normalized direction by ray/segment max_distance
  - far point of segment is start_point + scaled_direction
