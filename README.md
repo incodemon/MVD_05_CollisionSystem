@@ -24,10 +24,10 @@
 
 	indices of mat4.m: 12, 13, 14 are the translate component
 
-`  	0	4	8	Tx	
-	1	5	9	Ty
-	2	6	10	Tz
-	3	7	11	15`
+  	|0|4|8|Tx|	
+	|1|5|9|Ty|
+	|2|6|10|Tz|
+	|3|7|11|15|
 
 
  - normalise new direction 
