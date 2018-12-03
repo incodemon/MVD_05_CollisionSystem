@@ -5,11 +5,10 @@
 
 #### in CollisionSystem.cpp
  - get local points of ray/segment start point (use local_center),
-   and 8 points of box (use local_center and local_halfwidths)
+   and create/store 8 points of box (use local_center and local_halfwidths)
 
- - get model matrices of ray/segment and box, and 'all transforms' vector 
-   (to pass to getGlobalMatrix() function)
- - get global position of ray/segment start point all 8 points of box
+ - get transform component (i.e. model matrix) of entities of ray/segment and box
+ - use getGlobalMatrix() to get get global position of ray/segment start point all 8 points of box
    (a, b, c, d, e, f, g, h)
 
  - ray/segment direction must be rotated according to model matrix
@@ -23,7 +22,7 @@
    this will give us a matrix which rotates, but does not translate or scale
 
  - normalise new direction 
- - scale normalized direction by ray/segment max_distance
+ - *scale* normalized direction by ray/segment max_distance
  - far point of segment is start_point + scaled_direction
 
  - pass segment point and quad point to intersectSegmentQuad function
