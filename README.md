@@ -5,7 +5,7 @@
 
 #### in CollisionSystem.cpp
  - get local points of ray/segment start point (use local_center),
-   and 8 points of box (use local_center and local_halfwidths
+   and 8 points of box (use local_center and local_halfwidths)
 
  - get model matrices of ray/segment and box, and 'all transforms' vector 
    (to pass to getGlobalMatrix() function)
