@@ -44,8 +44,8 @@ void Game::init() {
 
 	//floor
     int ent_wall_near = ECS.createEntity("Wall Near");
-    //Mesh& fmc = ECS.createComponentForEntity<Mesh>(ent_wall_near);
-    //fmc.geometry = floor_geom_id; fmc.material = default_mat_id;
+    Mesh& fmc = ECS.createComponentForEntity<Mesh>(ent_wall_near);
+    fmc.geometry = floor_geom_id; fmc.material = default_mat_id;
     ECS.getComponentFromEntity<Transform>(ent_wall_near).rotateLocal(-90.0f*DEG2RAD, lm::vec3(1.0f, 0.0f, 0.0f)); //rotate it flat
     ECS.getComponentFromEntity<Transform>(ent_wall_near).translate(0, 0, -10);
     Collider& box_collider = ECS.createComponentForEntity<Collider>(ent_wall_near);

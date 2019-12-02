@@ -61,6 +61,105 @@ void CollisionSystem::update(float dt) {
 // - optional variable which specifies the maximum distance along ray which to search
 bool CollisionSystem::intersectSegmentBox(Collider& ray, Collider& box, lm::vec3& col_point, float& col_distance, float max_distance) {
     //the general approach of this function is as follows
+	Transform& ray_transform = ECS.getComponentFromEntity<Transform>(ray.owner);
+	
+		lm::mat4 ray_model = ray_transform.getGlobalMatrix(ECS.getAllComponents<Transform>());
+		
+		lm::vec3 ray_origin = ray_model.position();
+		
+		lm::mat4 ray_inv_trans = ray_model;
+		ray_inv_trans.m[12] = 0; ray_inv_trans.m[13] = 0; ray_inv_trans.m[14] = 0;
+		ray_inv_trans.inverse();
+		ray_inv_trans = ray_inv_trans.transpose();
+
+		lm::vec3 ray_dir_rotated = ray_inv_trans * ray.direction.normalize();
+		float test_distance = (ray.max_distance < max_distance ? ray.max_distance: max_distance);
+		lm::vec3 ray_far_point = ray_origin + ray_dir_rotated * test_distance;
+
+		//quads
+		Transform& box_transform = ECS.getComponentFromEntity<Transform>(box.owner);
+		mat4 box_global = box_transform.getGlobalMatrix(ECS.getAllComponents<Transform>());
+
+		//find box -> center
+		float x = box.local_halfwidth.x;
+		float y = box.local_halfwidth.y;
+		float z = box.local_halfwidth.z;
+		vec3 offset = box.local_center;
+
+		vec3 a(-x,y,z);
+		vec3 b(-x,-y,z);
+		vec3 c(x,-y,z);
+		vec3 d(x,y,z);
+		vec3 e(-x,y,-z);
+		vec3 f(-x,-y,-z);
+		vec3 g(x,-y,-z);
+		vec3 h(x,y,-z);
+
+		//adding offset for the collider
+		a = a + offset;
+		b = b + offset;
+		c = c + offset;
+		d = d + offset;
+		e = e + offset;
+		f = f + offset;
+		g = g + offset;
+		h = h + offset;
+
+		a = box_global * a;
+		b = box_global * b;
+		c = box_global * c;
+		d = box_global * d;
+		e = box_global * e;
+		f = box_global * f;
+		g = box_global * g;
+		h = box_global * h;
+
+		//a,b,c,d,e,f,g,h = points of box
+		//ray_origin & ray_far_point are our line
+		lm::vec3 r;
+		
+		//intersectSegmentQuad
+		
+
+		//call this function 6 times
+		//the function recieves the ray_origin & ray_far_point
+		//& four points of each plane
+		//function returns a boolean (collider or not)
+		//and returns by reference r = collision points
+		//if (function returns true)
+			//set col_distance = distance from ray_origin to collision points
+			// & return true;
+		bool abcd = intersectSegmentQuad(ray_origin, ray_far_point, a, b, c, d, col_point);
+		if (abcd) {
+			col_distance = (ray_origin - col_point).length();
+			return true;
+		}
+		bool dcgh = intersectSegmentQuad(ray_origin, ray_far_point, d, c, g, h, col_point);
+		if (dcgh) {
+			col_distance = (ray_origin - col_point).length();
+			return true;
+		}
+		bool hgfe = intersectSegmentQuad(ray_origin, ray_far_point, h, g, f, e, col_point);
+		if (hgfe) {
+			col_distance = (ray_origin - col_point).length();
+			return true;
+		}
+		bool efba = intersectSegmentQuad(ray_origin, ray_far_point, e, f, b, a, col_point);
+		if (efba) {
+			col_distance = (ray_origin - col_point).length();
+			return true;
+		}
+		bool adhe = intersectSegmentQuad(ray_origin, ray_far_point, a, d, h, e, col_point);
+		if (adhe) {
+			col_distance = (ray_origin - col_point).length();
+			return true;
+		}
+		bool bfgc = intersectSegmentQuad(ray_origin, ray_far_point, b, f, g, c, col_point);
+		if (bfgc) {
+			col_distance = (ray_origin - col_point).length();
+			return true;
+		}
+		return false;
     // - transform ray and box into world space and apply any offsets
     // - create six planes of box
     // - calculate collision of ray with each plane
